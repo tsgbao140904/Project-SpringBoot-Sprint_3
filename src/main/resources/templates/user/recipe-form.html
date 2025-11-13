@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${mode} == 'create' ? 'Thêm công thức' : 'Sửa công thức'"></title>
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+          rel="stylesheet">
+
+    <style>
+        body {
+            min-height: 100vh;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: system-ui, sans-serif;
+            background: radial-gradient(circle at top, #4caf50 0, #1f2933 45%, #0b1020 100%);
+        }
+
+        .recipe-form-card {
+            max-width: 720px;
+            width: 100%;
+            border-radius: 22px;
+            overflow: hidden;
+            box-shadow: 0 18px 45px rgba(0,0,0,0.55);
+            background: rgba(255,255,255,0.97);
+            backdrop-filter: blur(8px);
+        }
+
+        .recipe-form-header {
+            background: linear-gradient(90deg, #4caf50, #66bb6a);
+            color: #fff;
+            padding: 16px 22px;
+        }
+
+        .recipe-form-header h3 {
+            margin: 0;
+            font-weight: 700;
+        }
+
+        .recipe-form-header small {
+            opacity: .94;
+        }
+
+        .preview-img {
+            max-height: 180px;
+            object-fit: cover;
+            border-radius: 14px;
+        }
+
+        .form-section-title {
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: .08em;
+            color: #6b7280;
+            margin-bottom: 4px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="recipe-form-card">
+    <!-- HEADER -->
+    <div class="recipe-form-header d-flex justify-content-between align-items-center">
+        <div>
+            <h3>Recipe Discovery</h3>
+            <small th:text="${mode} == 'create' ? 'Thêm công thức mới' : 'Cập nhật công thức'">
+                Thêm công thức mới
+            </small>
+        </div>
+
+        <a th:href="@{/app/home}" class="btn btn-sm btn-outline-light rounded-pill">
+            ← Quay lại
+        </a>
+    </div>
+
+    <!-- BODY -->
+    <div class="p-4">
+        <form th:object="${recipe}"
+              th:action="${mode} == 'create' ?
+                         @{/app/recipes/new} :
+                         @{/app/recipes/{id}/edit(id=${id})}"
+              method="post"
+              enctype="multipart/form-data">
+
+            <!-- HÀNG 1: TÊN + DANH MỤC -->
+            <div class="row g-3 mb-3">
+                <div class="col-md-7">
+                    <label class="form-section-title">Thông tin chính</label>
+                    <div class="mb-2">
+                        <label class="form-label mb-1">Tên công thức</label>
+                        <input type="text" th:field="*{title}"
+                               class="form-control"
+                               placeholder="Ví dụ: Pasta Carbonara...">
+                    </div>
+                </div>
+
+                <div class="col-md-5">
+                    <label class="form-section-title">&nbsp;</label>
+                    <div class="mb-2">
+                        <label class="form-label mb-1">Chế độ ăn</label>
+                        <select th:field="*{userCategoryId}" class="form-select">
+                            <option th:each="c : ${categories}"
+                                    th:value="${c.id}"
+                                    th:text="${c.name}">
+                            </option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- HÀNG 2: NGUYÊN LIỆU & BƯỚC -->
+            <div class="mb-3">
+                <label class="form-section-title">Nguyên liệu & Cách làm</label>
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label class="form-label mb-1">Nguyên liệu</label>
+                        <textarea th:field="*{ingredients}" rows="4"
+                                  class="form-control"
+                                  placeholder="- 200g pasta
+- 2 quả trứng
+- 50g phô mai..."></textarea>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label mb-1">Các bước thực hiện</label>
+                        <textarea th:field="*{instructions}" rows="4"
+                                  class="form-control"
+                                  placeholder="1. Luộc pasta...
+2. Phi thơm bacon...
+3. Trộn sốt..."></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <!-- HÀNG 3: CALO / THỜI GIAN -->
+            <div class="row g-3 mb-3">
+                <div class="col-md-4">
+                    <label class="form-section-title">Thông tin dinh dưỡng</label>
+                    <label class="form-label mb-1">Calo</label>
+                    <input type="number" th:field="*{calories}" class="form-control" placeholder="vd: 500">
+                </div>
+                <div class="col-md-4">
+                    <label class="form-section-title">&nbsp;</label>
+                    <label class="form-label mb-1">Thời gian (phút)</label>
+                    <input type="number" th:field="*{cookingTime}" class="form-control" placeholder="vd: 30">
+                </div>
+                <div class="col-md-4">
+                    <label class="form-section-title">&nbsp;</label>
+                    <label class="form-label mb-1">Khẩu phần (servings)</label>
+                    <input type="number" th:field="*{servings}" class="form-control" placeholder="vd: 2">
+                </div>
+            </div>
+
+            <!-- HÀNG 4: HÌNH ẢNH -->
+            <div class="mb-3">
+                <label class="form-section-title">Hình ảnh</label>
+                <div class="row g-3">
+                    <div class="col-md-7">
+                        <label class="form-label mb-1">URL hình ảnh (tùy chọn)</label>
+                        <input type="text" th:field="*{imageUrl}" class="form-control"
+                               placeholder="https://...">
+                        <small class="text-muted">
+                            Bạn có thể dán link hình ảnh từ internet.
+                        </small>
+
+                        <div class="mt-3">
+                            <label class="form-label mb-1">Hoặc chọn ảnh từ máy</label>
+                            <input type="file" th:field="*{imageFile}"
+                                   class="form-control" accept="image/*">
+                            <small class="text-muted">
+                                Nếu chọn ảnh từ máy, hệ thống sẽ tự lưu file lên server.
+                            </small>
+                        </div>
+                    </div>
+
+                    <!-- PREVIEW -->
+                    <div class="col-md-5" th:if="${recipe.imageUrl != null}">
+                        <label class="form-label mb-1">Xem trước</label>
+                        <div class="border rounded-4 p-2 bg-light">
+                            <img th:src="${recipe.imageUrl}"
+                                 alt="preview" class="img-fluid preview-img">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- BUTTONS -->
+            <div class="d-flex justify-content-between pt-2">
+                <a th:href="@{/app/home}" class="btn btn-outline-secondary rounded-pill px-4">
+                    ← Hủy / Quay lại
+                </a>
+
+                <button class="btn btn-success rounded-pill px-4"
+                        type="submit"
+                        th:text="${mode} == 'create' ? 'Thêm công thức' : 'Lưu thay đổi'">
+                    Thêm công thức
+                </button>
+            </div>
+
+        </form>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

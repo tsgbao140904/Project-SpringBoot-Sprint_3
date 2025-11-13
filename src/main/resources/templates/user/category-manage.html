@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Chế độ ăn của tôi</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        body { background: #f5f5f7; font-family: system-ui, sans-serif; }
+        .card-wrap {
+            max-width: 700px;
+            margin: 40px auto;
+            background: #fff;
+            border-radius: 18px;
+            padding: 25px;
+            box-shadow: 0 12px 35px rgba(0,0,0,.15);
+        }
+        .title-main { font-size: 22px; font-weight: 700; color: #15803d; }
+    </style>
+</head>
+<body>
+
+<div class="card-wrap">
+
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <div>
+            <div class="title-main">Danh sách chế độ ăn</div>
+            <small class="text-muted">Tất cả chế độ ăn của bạn</small>
+        </div>
+
+        <a href="/app/categories/create" class="btn btn-success rounded-pill px-3">
+            + Thêm mới
+        </a>
+    </div>
+
+    <table class="table table-hover">
+        <thead>
+        <tr>
+            <th>#</th>
+            <th>Tên</th>
+            <th>Icon</th>
+            <th>Màu</th>
+            <th></th>
+        </tr>
+        </thead>
+
+        <tbody>
+        <tr th:each="item, i : ${categories}">
+            <td th:text="${i.index + 1}"></td>
+            <td th:text="${item.name}"></td>
+            <td th:text="${item.icon}"></td>
+            <td>
+                <span th:style="'display:inline-block;width:22px;height:22px;border-radius:50%;background:' + ${item.colorCode}"></span>
+            </td>
+
+            <td class="text-end">
+
+                <!-- Nút Sửa -->
+                <a th:href="@{'/app/categories/edit/' + ${item.id}}"
+                   class="btn btn-sm btn-primary rounded-pill px-3 me-1">
+                    Sửa
+                </a>
+
+                <!-- Nút Xóa -->
+                <a th:href="@{'/app/categories/delete/' + ${item.id}}"
+                   class="btn btn-sm btn-danger rounded-pill px-3">
+                    Xóa
+                </a>
+            </td>
+
+        </tr>
+        </tbody>
+
+    </table>
+
+    <a href="/app/home" class="btn btn-outline-secondary rounded-pill px-4">← Quay lại</a>
+
+</div>
+
+</body>
+</html>

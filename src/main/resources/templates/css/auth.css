@@ -1,0 +1,120 @@
+/* RESET */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html, body {
+    height: 100%;
+    width: 100%;
+}
+
+/* BODY */
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: #ded1cf;
+    font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    overflow: hidden; /* bỏ scroll */
+}
+
+/* CARD */
+.card {
+    width: 380px;
+    background: #ffffff;
+    padding: 28px;
+    border-radius: 14px;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+}
+
+/* TITLE */
+.title {
+    text-align: center;
+    color: #4caf50;
+    font-size: 23px;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.subtitle {
+    text-align: center;
+    font-size: 14px;
+    color: #777;
+    margin-bottom: 20px;
+}
+
+/* INPUTS */
+label {
+    display: block;
+    margin-bottom: 6px;
+    font-size: 14px;
+    color: #333;
+}
+
+input {
+    width: 100%;
+    height: 40px;
+    background: #f6f4f4;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    padding: 8px 12px;
+    margin-bottom: 14px;
+    font-size: 14px;
+}
+
+input:focus {
+    background: #fff;
+    border-color: #4caf50;
+    outline: none;
+}
+
+/* BUTTON */
+.btn {
+    width: 100%;
+    height: 42px;
+    background: #4caf50;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-weight: 600;
+    font-size: 15px;
+    cursor: pointer;
+    margin-top: 4px;
+}
+
+.btn:hover {
+    opacity: 0.92;
+}
+
+/* TEXT + LINK */
+.center-text {
+    text-align: center;
+    margin-top: 12px;
+    font-size: 14px;
+}
+
+.link {
+    color: #4caf50;
+    text-decoration: none;
+}
+
+.link:hover {
+    text-decoration: underline;
+}
+
+/* ERROR MESSAGE */
+.alert {
+    text-align: center;
+    font-size: 14px;
+    color: #d32f2f;
+    margin-bottom: 8px;
+}
+
+.success {
+    text-align: center;
+    font-size: 14px;
+    color: #2e7d32;
+    margin-bottom: 8px;
+}

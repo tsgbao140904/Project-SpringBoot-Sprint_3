@@ -24,12 +24,10 @@ public class Recipe {
     @Column(nullable = false, length = 150)
     private String title;
 
-    @Lob
-    @Column(nullable = false)
+    @Lob @Column(nullable = false)
     private String ingredients;
 
-    @Lob
-    @Column(nullable = false)
+    @Lob @Column(nullable = false)
     private String instructions;
 
     private Integer calories;
@@ -60,26 +58,19 @@ public class Recipe {
     @Column(name = "updated_at")
     private Timestamp updatedAt;
 
-    // =====================================================
-    // 🔥🔥🔥 BỔ SUNG TRƯỜNG CHO CHỨC NĂNG CHIA SẺ CỘNG ĐỒNG
-    // =====================================================
-
-    // PENDING / APPROVED / REJECTED
+    // SHARE FIELDS
     @Column(name = "share_status", length = 20)
     private String shareStatus;
 
-    // thời gian được admin duyệt
     @Column(name = "share_approved_at")
     private Timestamp shareApprovedAt;
 
-    // lý do từ chối
     @Lob
     @Column(name = "share_rejected_reason")
     private String shareRejectedReason;
 
 
-    public Recipe() {}
-
+    public Recipe() { }
 
     @PrePersist
     void onCreate() {
@@ -93,7 +84,6 @@ public class Recipe {
         if (this.isPublic == null) this.isPublic = 0;
         if (this.version == null) this.version = 0;
 
-        // tạo mặc định
         if (this.shareStatus == null) this.shareStatus = null;
     }
 

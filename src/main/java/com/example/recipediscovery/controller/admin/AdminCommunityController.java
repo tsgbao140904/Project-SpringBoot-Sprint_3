@@ -2,9 +2,11 @@ package com.example.recipediscovery.controller.admin;
 
 import com.example.recipediscovery.model.Recipe;
 import com.example.recipediscovery.repository.RecipeRepository;
+import com.example.recipediscovery.service.RecipeService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.sql.Timestamp;
 import java.util.List;
@@ -14,9 +16,12 @@ import java.util.List;
 public class AdminCommunityController {
 
     private final RecipeRepository recipeRepo;
+    private final RecipeService recipeService;
 
-    public AdminCommunityController(RecipeRepository recipeRepo) {
+    public AdminCommunityController(RecipeRepository recipeRepo,
+                                    RecipeService recipeService) {
         this.recipeRepo = recipeRepo;
+        this.recipeService = recipeService;
     }
 
     @GetMapping
@@ -34,33 +39,40 @@ public class AdminCommunityController {
         return "admin/community/list";
     }
 
-    @PostMapping("/{id}/approve")
-    public String approve(@PathVariable Long id) {
+    @GetMapping("/{id}")
+    public String viewDetail(@PathVariable Long id, Model model) {
 
-        Recipe r = recipeRepo.findById(id).orElseThrow();
+        Recipe r = recipeService.getById(id);
+        model.addAttribute("recipe", r);
 
-        r.setShareStatus("APPROVED");
-        r.setShareApprovedAt(new Timestamp(System.currentTimeMillis()));
-        r.setShareRejectedReason(null);
-
-        recipeRepo.save(r);
-
-        return "redirect:/admin/community?tab=pending&success";
+        return "admin/community/detail";
     }
 
-    @PostMapping("/{id}/reject")
-    public String reject(
-            @PathVariable Long id,
-            @RequestParam("reason") String reason
-    ) {
-        Recipe r = recipeRepo.findById(id).orElseThrow();
+    @PostMapping("/{id}/update")
+    public String updateStatus(@PathVariable Long id,
+                               @RequestParam String status,
+                               @RequestParam(required = false) String reason,
+                               RedirectAttributes redirect) {
 
-        r.setShareStatus("REJECTED");
-        r.setShareRejectedReason(reason);
-        r.setShareApprovedAt(null);
+        Recipe r = recipeService.getById(id);
+
+        r.setShareStatus(status);
+
+        if ("REJECTED".equals(status)) {
+            r.setShareRejectedReason(reason);
+            r.setShareApprovedAt(null);
+        } else {
+            r.setShareRejectedReason(null);
+        }
+
+        if ("APPROVED".equals(status)) {
+            r.setShareApprovedAt(new Timestamp(System.currentTimeMillis()));
+        }
 
         recipeRepo.save(r);
 
-        return "redirect:/admin/community?tab=pending&rejected";
+        redirect.addFlashAttribute("saved", true);
+
+        return "redirect:/admin/community/" + id;
     }
 }

@@ -307,7 +307,11 @@
 
         <!-- MAIN CONTENT -->
         <div class="col-md-9 col-lg-10">
-
+            <!-- ALERT SAU KHI SHARE -->
+            <div th:if="${param.sharedSuccess}" class="alert alert-success alert-dismissible fade show" role="alert">
+                🎉 Công thức của bạn đã được gửi lên cộng đồng và đang chờ admin duyệt!
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
             <div class="d-flex justify-content-between align-items-center mb-3">
                 <h4 class="fw-bold">Công thức của bạn</h4>
                 <br>
@@ -348,22 +352,69 @@
                                 <span th:text="${r.cookingTime} + ' phút'"></span>
                             </div>
 
+                            <!-- ⭐ Trạng thái chia sẻ -->
+                            <div th:if="${r.shareStatus != null}" class="mb-2">
+
+                                <!-- ⏳ Đang chờ duyệt -->
+                                <span th:if="${r.shareStatus == 'PENDING'}"
+                                      class="badge rounded-pill bg-warning text-dark px-3 py-2">
+                                        ⏳ Đang chờ duyệt
+                                </span>
+
+                                <!-- ✔ Đã duyệt -->
+                                <span th:if="${r.shareStatus == 'APPROVED'}"
+                                      class="badge rounded-pill bg-success px-3 py-2">
+                                        ✔ Đã được duyệt
+                                 </span>
+
+                                <!-- ❌ Bị từ chối -->
+                                <span th:if="${r.shareStatus == 'REJECTED'}"
+                                      class="badge rounded-pill bg-danger px-3 py-2"
+                                      th:title="'Lý do: ' + ${r.shareRejectedReason}">
+                                            ❌ Bị từ chối
+                                </span>
+
+                            </div>
+
+
                             <div class="mt-auto d-flex gap-1">
 
-                                <button class="btn btn-edit btn-card w-100"
-                                        th:onclick="'window.location.href=\'/app/recipes/' + ${r.id} + '/edit\''">
+                                <!-- NÚT SỬA -->
+                                <button class="btn btn-edit btn-card flex-fill"
+                                        th:onclick="'window.location.href=\'/app/recipes/' + ${r.id} + '/edit\''"
+                                        th:disabled="${r.shareStatus == 'APPROVED'}">
                                     ✏ Sửa
                                 </button>
 
-                                <form th:action="@{'/app/recipes/' + ${r.id} + '/share'}"
-                                      method="post" class="w-100">
-                                    <button class="btn btn-share btn-card w-100">
-                                        🔗 Chia sẻ
-                                    </button>
-                                </form>
+                                <!-- ⭐ SHARE BUTTON CONDITIONS -->
+                                <div class="flex-fill">
 
+                                    <!-- ⭐ Chưa share hoặc bị từ chối -->
+                                    <form th:if="${r.shareStatus == null || r.shareStatus == 'REJECTED'}"
+                                          th:action="@{'/app/recipes/' + ${r.id} + '/share'}"
+                                          method="post">
+                                        <button class="btn btn-share btn-card w-100">
+                                            🔗 Chia sẻ
+                                        </button>
+                                    </form>
+
+                                    <!-- ⏳ Đang chờ duyệt -->
+                                    <button th:if="${r.shareStatus == 'PENDING'}"
+                                            class="btn btn-secondary btn-card w-100" disabled>
+                                        ⏳
+                                    </button>
+
+                                    <!-- ✔ Đã duyệt -->
+                                    <button th:if="${r.shareStatus == 'APPROVED'}"
+                                            class="btn btn-success btn-card w-100" disabled>
+                                        ✔
+                                    </button>
+
+                                </div>
+
+                                <!-- NÚT XOÁ -->
                                 <form th:action="@{'/app/recipes/' + ${r.id} + '/delete'}"
-                                      method="post" class="w-100">
+                                      method="post" class="flex-fill">
                                     <button class="btn btn-delete btn-card w-100">
                                         🗑 Xóa
                                     </button>

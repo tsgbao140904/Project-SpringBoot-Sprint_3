@@ -101,7 +101,7 @@ public class UserRecipeController {
     @PostMapping("/{id}/share")
     public String share(@PathVariable Long id) {
         recipeService.shareForUser(id);
-        return "redirect:/app/home?shared";
+        return "redirect:/app/home?sharedSuccess=1";
     }
 
 

@@ -75,12 +75,26 @@ public class RecipeService {
     public void shareForUser(Long id) {
         Recipe r = getById(id);
 
-        r.setIsPublic(1);                  // cho phép hiển thị cộng đồng
-        r.setShareStatus("PENDING");       // chờ duyệt
-        r.setShareRejectedReason(null);    // xóa lý do cũ
+        // Nếu đã duyệt → KHÔNG cho share nữa
+        if ("APPROVED".equals(r.getShareStatus())) {
+            return;
+        }
+
+        // Nếu đang chờ duyệt → KHÔNG cho share nữa
+        if ("PENDING".equals(r.getShareStatus())) {
+            return;
+        }
+
+        // Nếu bị từ chối hoặc chưa share → cho phép share
+        r.setIsPublic(1);
+        r.setShareStatus("PENDING");
+        r.setShareRejectedReason(null);
 
         recipeRepo.save(r);
     }
+
+
+
 
 
     // ================== helpers ==================
@@ -132,6 +146,23 @@ public class RecipeService {
         if (trimmed.isEmpty()) return null;
 
         return trimmed;
+    }
+    public void updateShareStatus(Long id, String status, String reason) {
+
+        Recipe r = getById(id);
+
+        r.setShareStatus(status);
+
+        if ("REJECTED".equals(status)) {
+            r.setShareRejectedReason(reason);
+            r.setShareApprovedAt(null);
+        } else if ("APPROVED".equals(status)) {
+            r.setShareApprovedAt(new Timestamp(System.currentTimeMillis()));
+            r.setShareRejectedReason(null);
+            r.setIsPublic(1);
+        }
+
+        recipeRepo.save(r);
     }
 
 }

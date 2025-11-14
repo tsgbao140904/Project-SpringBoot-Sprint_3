@@ -8,54 +8,222 @@
           href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
 
     <style>
-        body { background: #f5f7fb; font-family: system-ui, sans-serif; }
+        body {
+    background: #f3f4f6;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
 
-        .sidebar {
-            background: linear-gradient(180deg, #111827, #1f2937);
-            color: white;
-            min-height: 100vh;
-            padding: 20px;
-        }
-        .nav-link {
-            border-radius: 999px;
-            padding: 8px 14px;
-            color: white;
-        }
-        .nav-link.active {
-            background: #22c55e;
-            font-weight: 700;
-        }
+/* ===================== SIDEBAR ===================== */
+.sidebar {
+    background: linear-gradient(180deg, #111827 0%, #1f2937 100%);
+    min-height: 100vh;
+    color: #fff;
+    padding: 20px 18px;
+    box-shadow: 4px 0 18px rgba(0,0,0,0.45);
+}
 
-        .section-title {
-            font-size: 22px;
-            font-weight: 700;
-        }
+.sidebar h4 {
+    font-weight: 700;
+    font-size: 20px;
+    margin-bottom: 18px;
+    padding-left: 2px;
+}
 
-        .card-approve { border-radius: 18px; }
+.sidebar .nav-link {
+    border-radius: 12px;
+    padding: 10px 14px;
+    color: #e5e7eb !important;
+    font-size: 15px;
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    transition: .2s;
+}
+
+.sidebar .nav-link:hover:not(.active) {
+    background: rgba(255,255,255,0.12);
+}
+
+.sidebar .nav-link.active {
+    background: #22c55e;
+    color: #0b1120 !important;
+    font-weight: 600;
+}
+
+.sidebar .icon {
+    width: 26px;
+    height: 26px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255,255,255,0.1);
+    border-radius: 8px;
+    font-size: 14px;
+}
+
+/* Logout button */
+.sidebar form {
+    border-top: 1px solid rgba(255,255,255,0.2);
+    padding-top: 20px;
+    margin-top: 30px;
+}
+
+/* ===================== MAIN HEADER ===================== */
+.main-header {
+    border-bottom: 1px solid rgba(0,0,0,0.1);
+    padding-bottom: 14px;
+    margin-bottom: 25px;
+}
+
+/* ===================== DASHBOARD CARDS ===================== */
+.stat-card {
+    border-radius: 16px;
+    border: none;
+    padding: 22px;
+    color: #fff;
+    box-shadow: 0 8px 18px rgba(0,0,0,0.12);
+}
+
+.bg-blue { background: #3b82f6; }
+.bg-green { background: #22c55e; }
+.bg-yellow { background: #eab308; }
+.bg-red { background: #ef4444; }
+
+.stat-value {
+    font-size: 28px;
+    font-weight: 700;
+}
+.stat-label {
+    font-size: 14px;
+    opacity: .9;
+}
+
+/* ===================== TABLES ===================== */
+.table-hover tbody tr:hover {
+    background: #f0f2f5 !important;
+}
+
+.table th {
+    font-weight: 600;
+    color: #374151;
+}
+
+/* ===================== BUTTONS ===================== */
+.btn-success {
+    background: #22c55e !important;
+    border-color: #22c55e !important;
+}
+.btn-success:hover {
+    background: #16a34a !important;
+}
+
+.btn-primary {
+    background: #3b82f6 !important;
+    border-color: #3b82f6 !important;
+}
+.btn-primary:hover {
+    background: #2563eb !important;
+}
+
+.btn-danger {
+    background: #ef4444 !important;
+    border-color: #ef4444 !important;
+}
+.btn-danger:hover {
+    background: #dc2626 !important;
+}
+
+.btn-warning {
+    background: #eab308 !important;
+    border-color: #eab308 !important;
+    color: #000;
+}
+.btn-warning:hover {
+    background: #ca8a04 !important;
+}
+
+/* ===================== FORM PAGES ===================== */
+.form-card {
+    background: #ffffff;
+    border-radius: 16px;
+    padding: 28px;
+    box-shadow: 0 15px 40px rgba(0,0,0,0.07);
+}
+
+.form-title {
+    font-size: 22px;
+    font-weight: 700;
+    color: #15803d;
+}
+
+label {
+    font-weight: 600;
+    margin-bottom: 6px;
+}
+
+/* ===================== COMMUNITY APPROVAL BADGES ===================== */
+.badge.bg-warning {
+    background: #facc15 !important;
+    color: #000 !important;
+}
+.badge.bg-success {
+    background: #22c55e !important;
+}
+.badge.bg-danger {
+    background: #ef4444 !important;
+}
+
+/* Clickable table rows if needed */
+.table-row-link {
+    cursor: pointer;
+    transition: .2s;
+}
+.table-row-link:hover {
+    background: #eef2ff !important;
+}
+
     </style>
 </head>
 
 <body>
 
 <div class="container-fluid">
-
     <div class="row">
 
         <!-- SIDEBAR -->
         <div class="col-md-3 col-lg-2 sidebar">
 
             <h4 class="mb-3">Admin Panel</h4>
+            <ul class="nav flex-column mb-auto">
 
-            <a href="/admin/dashboard"
-               class="nav-link mb-2">📊 Dashboard</a>
+                <li class="nav-item mb-1">
+                    <a href="/admin/dashboard"
+                       class="nav-link"
+                       th:classappend="${activePage=='dashboard'} ? ' active'">
+                        <span class="icon">📊</span> Dashboard
+                    </a>
+                </li>
 
-            <a href="/admin/users"
-               class="nav-link mb-2">👤 Quản lý người dùng</a>
+                <li class="nav-item mb-1">
+                    <a href="/admin/users"
+                       class="nav-link"
+                       th:classappend="${activePage=='users'} ? ' active'">
+                        <span class="icon">👥</span> Quản lý người dùng
+                    </a>
+                </li>
 
-            <a href="/admin/community"
-               class="nav-link active">🌎 Duyệt công thức</a>
+                <li class="nav-item mb-1">
+                    <a href="/admin/community"
+                       class="nav-link"
+                       th:classappend="${activePage=='community'} ? ' active'">
+                        <span class="icon">🌎</span> Duyệt công thức
+                    </a>
+                </li>
 
-            <form class="mt-4" th:action="@{/logout}" method="post">
+            </ul>
+
+            <form class="mt-4 pt-3 border-top border-secondary-subtle"
+                  th:action="@{/logout}" method="post">
                 <button class="btn btn-outline-light w-100">Đăng xuất</button>
             </form>
 
@@ -65,128 +233,110 @@
         <!-- MAIN -->
         <div class="col-md-9 col-lg-10 p-4">
 
-            <h3 class="section-title mb-3">Duyệt công thức cộng đồng</h3>
+            <h3 class="section-title mb-3">Quản lý công thức cộng đồng</h3>
 
             <!-- TAB -->
-            <ul class="nav nav-tabs mb-3">
-                <li class="nav-item">
-                    <a class="nav-link"
-                       th:classappend="${tab=='pending'} ? 'active' : ''"
-                       th:href="@{/admin/community(tab='pending')}">⏳ Chờ duyệt</a>
-                </li>
+            <div class="d-flex gap-2 mb-3">
 
-                <li class="nav-item">
-                    <a class="nav-link"
-                       th:classappend="${tab=='approved'} ? 'active' : ''"
-                       th:href="@{/admin/community(tab='approved')}">✔ Đã duyệt</a>
-                </li>
+                <a th:href="@{/admin/community(tab='pending')}"
+                   class="btn btn-sm fw-bold"
+                   th:classappend="${tab=='pending'} ? 'btn-primary' : 'btn-outline-primary'">
+                    ⏳ Chờ duyệt
+                </a>
 
-                <li class="nav-item">
-                    <a class="nav-link"
-                       th:classappend="${tab=='rejected'} ? 'active' : ''"
-                       th:href="@{/admin/community(tab='rejected')}">❌ Từ chối</a>
-                </li>
-            </ul>
+                <a th:href="@{/admin/community(tab='approved')}"
+                   class="btn btn-sm fw-bold"
+                   th:classappend="${tab=='approved'} ? 'btn-success' : 'btn-outline-success'">
+                    ✔ Đã duyệt
+                </a>
 
-
-            <!-- LIST -->
-            <div class="row g-3">
-
-                <div class="col-md-4" th:each="r : ${recipes}">
-                    <div class="card card-approve shadow-sm">
-
-                        <img th:src="${r.imageUrl}"
-                             class="card-img-top"
-                             style="height:180px; width:100%; object-fit:cover;">
-
-
-                        <div class="card-body">
-
-                            <h5 th:text="${r.title}"></h5>
-
-                            <p class="small text-muted"
-                               th:text="${r.ingredients}">
-                                ...
-                            </p>
-
-                            <div class="d-flex justify-content-between">
-
-                                <!-- APPROVE BUTTON -->
-                                <form th:if="${tab == 'pending'}"
-                                      th:action="@{'/admin/community/' + ${r.id} + '/approve'}"
-                                      method="post">
-                                    <button class="btn btn-success btn-sm">Duyệt</button>
-                                </form>
-
-                                <!-- REJECT BUTTON -->
-                                <button th:if="${tab == 'pending'}"
-                                        class="btn btn-danger btn-sm"
-                                        data-bs-toggle="modal"
-                                        th:data-bs-target="'#rejectModal' + ${r.id}">
-                                    Từ chối
-                                </button>
-
-                            </div>
-
-                        </div>
-
-                    </div>
-
-                    <!-- MODAL REJECT -->
-                    <div class="modal fade"
-                         th:id="'rejectModal' + ${r.id}"
-                         tabindex="-1">
-                        <div class="modal-dialog">
-                            <div class="modal-content">
-
-                                <form th:action="@{'/admin/community/' + ${r.id} + '/reject'}"
-                                      method="post">
-
-                                    <div class="modal-header">
-                                        <h5 class="modal-title">Lý do từ chối</h5>
-                                        <button type="button"
-                                                class="btn-close"
-                                                data-bs-dismiss="modal">
-                                        </button>
-                                    </div>
-
-                                    <div class="modal-body">
-                                        <textarea class="form-control"
-                                                  name="reason"
-                                                  rows="4"
-                                                  placeholder="Nhập lý do từ chối..."
-                                                  required></textarea>
-                                    </div>
-
-                                    <div class="modal-footer">
-                                        <button class="btn btn-secondary"
-                                                data-bs-dismiss="modal">Hủy</button>
-                                        <button class="btn btn-danger"
-                                                type="submit">Từ chối</button>
-                                    </div>
-
-                                </form>
-
-                            </div>
-                        </div>
-                    </div>
-
-                </div>
+                <a th:href="@{/admin/community(tab='rejected')}"
+                   class="btn btn-sm fw-bold"
+                   th:classappend="${tab=='rejected'} ? 'btn-danger' : 'btn-outline-danger'">
+                    ❌ Từ chối
+                </a>
 
             </div>
 
-            <p th:if="${#lists.isEmpty(recipes)}"
-               class="text-muted mt-3">
-                Không có công thức nào.
-            </p>
+            <!-- TABLE -->
+            <div class="table-responsive shadow bg-white p-3 rounded">
+                <table class="table table-hover align-middle">
+                    <thead class="table-light">
+                    <tr>
+                        <th>#</th>
+                        <th>Ảnh</th>
+                        <th>Tiêu đề</th>
+                        <th>Người gửi</th>
+                        <th>Ngày gửi</th>
+                        <th>Trạng thái</th>
+                        <th class="text-end">Hành động</th>
+                    </tr>
+                    </thead>
+
+                    <tbody>
+
+                    <tr th:each="r, i : ${recipes}">
+                        <td th:text="${i.index + 1}"></td>
+
+                        <td>
+                            <img th:src="${r.imageUrl}"
+                                 style="width:60px; height:45px; object-fit:cover; border-radius:6px;">
+                        </td>
+
+                        <td th:text="${r.title}"></td>
+
+                        <td th:text="${r.userId}"></td>
+
+                        <td th:text="${#dates.format(r.createdAt, 'dd/MM/yyyy HH:mm')}"></td>
+
+                        <td>
+                            <span th:if="${r.shareStatus=='PENDING'}"
+                                  class="badge bg-warning text-dark">⏳ Chờ duyệt</span>
+
+                            <span th:if="${r.shareStatus=='APPROVED'}"
+                                  class="badge bg-success">✔ Đã duyệt</span>
+
+                            <span th:if="${r.shareStatus=='REJECTED'}"
+                                  class="badge bg-danger">❌ Từ chối</span>
+                        </td>
+
+                        <td class="text-end">
+                            <a th:href="@{'/admin/community/' + ${r.id}}"
+                               class="btn btn-primary btn-sm">
+                                👁 Xem
+                            </a>
+
+                            <!-- Chỉ hiện khi đang chờ duyệt -->
+                            <a th:if="${tab=='pending'}"
+                               th:href="@{'/admin/community/' + ${r.id} + '?approve'}"
+                               class="btn btn-success btn-sm">
+                                ✔ Duyệt
+                            </a>
+
+                            <a th:if="${tab=='pending'}"
+                               th:href="@{'/admin/community/' + ${r.id} + '?reject'}"
+                               class="btn btn-danger btn-sm">
+                                ❌ Từ chối
+                            </a>
+                        </td>
+
+                    </tr>
+
+                    <tr th:if="${#lists.isEmpty(recipes)}">
+                        <td colspan="7" class="text-center text-muted py-3">
+                            Không có công thức nào.
+                        </td>
+                    </tr>
+
+                    </tbody>
+                </table>
+            </div>
 
         </div>
 
     </div>
-
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-
 </body>
 </html>

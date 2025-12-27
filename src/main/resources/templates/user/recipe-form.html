@@ -57,6 +57,12 @@
             color: #6b7280;
             margin-bottom: 4px;
         }
+
+        /* ✅ giúp textarea hiển thị xuống dòng dễ đọc hơn */
+        textarea.form-control {
+            white-space: pre-wrap;   /* giữ xuống dòng + tự xuống dòng khi dài */
+            line-height: 1.5;
+        }
     </style>
 </head>
 <body>
@@ -117,19 +123,22 @@
                 <div class="row g-3">
                     <div class="col-md-6">
                         <label class="form-label mb-1">Nguyên liệu</label>
-                        <textarea th:field="*{ingredients}" rows="4"
+                        <textarea th:field="*{ingredients}" rows="6"
                                   class="form-control"
                                   placeholder="- 200g pasta
 - 2 quả trứng
 - 50g phô mai..."></textarea>
+                        <small class="text-muted">Mỗi dòng là 1 nguyên liệu.</small>
                     </div>
+
                     <div class="col-md-6">
                         <label class="form-label mb-1">Các bước thực hiện</label>
-                        <textarea th:field="*{instructions}" rows="4"
+                        <textarea th:field="*{instructions}" rows="6"
                                   class="form-control"
                                   placeholder="1. Luộc pasta...
 2. Phi thơm bacon...
 3. Trộn sốt..."></textarea>
+                        <small class="text-muted">Mỗi dòng là 1 bước.</small>
                     </div>
                 </div>
             </div>

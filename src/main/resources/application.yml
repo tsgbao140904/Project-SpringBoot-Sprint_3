@@ -1,11 +1,11 @@
 spring:
   datasource:
     url: jdbc:mysql://localhost:3306/recipe_discovery?useUnicode=true&characterEncoding=utf8&useSSL=false&allowPublicKeyRetrieval=true
-    username: root      # sửa theo máy bạn
-    password: 01218923570Aa     # sửa theo máy bạn
+    username: root
+    password: 01218923570Aa
   jpa:
     hibernate:
-      ddl-auto: none    # vì bạn đã tạo sẵn bảng
+      ddl-auto: none
     properties:
       hibernate:
         dialect: org.hibernate.dialect.MySQL8Dialect

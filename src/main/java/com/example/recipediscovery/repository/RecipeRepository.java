@@ -7,7 +7,7 @@ import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 
-public interface    RecipeRepository extends JpaRepository<Recipe, Long> {
+public interface RecipeRepository extends JpaRepository<Recipe, Long> {
 
     List<Recipe> findByUserId(Long userId);
 
@@ -19,7 +19,6 @@ public interface    RecipeRepository extends JpaRepository<Recipe, Long> {
             "order by r.createdAt desc")
     List<Recipe> searchUserRecipes(Long userId, Long categoryId, String kw);
 
-    // 🔥 NEW: lấy theo trạng thái chia sẻ
     List<Recipe> findByShareStatus(String shareStatus);
 
     List<Recipe> findByShareStatusAndIsPublic(String shareStatus, Integer isPublic);
@@ -30,4 +29,7 @@ public interface    RecipeRepository extends JpaRepository<Recipe, Long> {
             "AND (:kw = '' OR LOWER(r.title) LIKE :kw OR LOWER(r.ingredients) LIKE :kw) " +
             "ORDER BY r.created_at DESC", nativeQuery = true)
     List<Recipe> searchCommunityRecipes(@Param("kw") String kw);
+
+    // NEW: dùng cho dashboard
+    long countByShareStatus(String shareStatus);
 }

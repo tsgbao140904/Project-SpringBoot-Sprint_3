@@ -1,7 +1,8 @@
-// MealPlanService.java
 package com.example.recipediscovery.service;
 
-import com.example.recipediscovery.model.*;
+import com.example.recipediscovery.model.MealPlan;
+import com.example.recipediscovery.model.MealPlanItem;
+import com.example.recipediscovery.model.Recipe;
 import com.example.recipediscovery.repository.MealPlanItemRepository;
 import com.example.recipediscovery.repository.MealPlanRepository;
 import com.example.recipediscovery.repository.RecipeRepository;
@@ -10,7 +11,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
-import java.util.*;
+import java.util.List;
+import java.util.Optional;
 
 @Service
 public class MealPlanService {
@@ -47,7 +49,8 @@ public class MealPlanService {
      * Lấy toàn bộ items của 1 plan
      */
     public List<MealPlanItem> getItemsByPlan(Long planId) {
-        return itemRepo.findByMealPlanId(planId);
+        // FIX: dùng findByMealPlan_Id
+        return itemRepo.findByMealPlan_Id(planId);
     }
 
     /**
@@ -60,8 +63,10 @@ public class MealPlanService {
 
         Recipe recipe = recipeId != null ? recipeRepo.findById(recipeId).orElse(null) : null;
 
-        // Tìm item hiện có
-        Optional<MealPlanItem> existing = itemRepo.findByMealPlanId(planId).stream()
+        // FIX: dùng findByMealPlan_Id
+        List<MealPlanItem> items = itemRepo.findByMealPlan_Id(planId);
+
+        Optional<MealPlanItem> existing = items.stream()
                 .filter(item -> item.getDayOfWeek().equals(dayOfWeek) && item.getMealType().equals(mealType))
                 .findFirst();
 

@@ -94,7 +94,7 @@
             flex-shrink: 0;
         }
 
-        /* ==================== TRANG TRÍ LỊCH BỮA ĂN ĐẸP HƠN ==================== */
+        /* ==================== TRANG TRÍ LỊCH BỮA ĂN ==================== */
         .meal-time-card {
             background: white;
             border-radius: 20px;
@@ -117,7 +117,6 @@
             color: #6b7280;
         }
 
-        /* Thẻ món nhỏ gọn + đẹp */
         .meal-badge {
             display: flex;
             align-items: center;
@@ -154,7 +153,6 @@
             padding: 4px 8px;
         }
 
-        /* Màu nền nhẹ cho từng ngày */
         .day-row {
             transition: background 0.3s;
         }
@@ -177,7 +175,7 @@
 </head>
 <body>
 
-<!-- NAVBAR – Y CHANG TRANG HOME -->
+<!-- NAVBAR -->
 <nav class="navbar navbar-expand-lg navbar-dark navbar-custom position-relative">
     <div class="container-fluid px-3">
         <a class="navbar-brand" th:href="@{/app/home}">Recipe Discovery</a>
@@ -211,7 +209,7 @@
 <div class="container-fluid">
     <div class="row gx-4 mt-2">
 
-        <!-- SIDEBAR – Y CHANG TRANG HOME -->
+        <!-- SIDEBAR -->
         <div class="col-md-3 col-lg-2 mb-3">
             <div class="sidebar-card">
                 <div class="sidebar-title">MỤC LỤC</div>
@@ -248,15 +246,19 @@
             </div>
         </div>
 
-        <!-- NỘI DUNG CHÍNH – LỊCH ĐẸP LUNG LINH -->
+        <!-- MAIN -->
         <div class="col-md-9 col-lg-10">
 
             <div class="d-flex justify-content-between align-items-center mb-4">
                 <h4 class="fw-bold mb-0 text-success">Kế hoạch bữa ăn</h4>
+                <div th:if="${param.saved}" class="alert alert-success alert-dismissible fade show" role="alert">
+                    ✅ Kế hoạch bữa ăn đã được cập nhật!
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
                 <span class="text-muted">Lên lịch trình bữa ăn cho tuần của bạn</span>
             </div>
 
-            <!-- Thời gian các bữa – thêm icon đẹp -->
+            <!-- Thời gian các bữa -->
             <div class="row g-3 mb-5">
                 <div class="col-md-3">
                     <div class="meal-time-card">
@@ -284,7 +286,7 @@
                 </div>
             </div>
 
-            <!-- Lịch tuần – siêu đẹp -->
+            <!-- Lịch tuần -->
             <div class="card shadow-lg border-0 rounded-4">
                 <div class="card-body p-4">
                     <h5 class="card-title fw-bold text-success mb-4">Tuần này</h5>
@@ -307,12 +309,14 @@
                                     th:text="${day}"></td>
 
                                 <td th:each="meal : ${mealTypes}">
-                                    <!-- Món đã chọn – thẻ nhỏ đẹp -->
+                                    <!-- Đã chọn -->
                                     <div th:if="${planMap[iter.index+1][meal.key]}" class="meal-badge"
                                          th:onclick="'window.location.href=\'/app/recipes/' + ${planMap[iter.index+1][meal.key].id} + '\''">
                                         <img th:src="${planMap[iter.index+1][meal.key].imageUrl} ?: 'https://via.placeholder.com/54'"
                                              alt="Món">
-                                        <div class="title" th:text="${planMap[iter.index+1][meal.key].title}"></div>
+                                        <!-- ✅ title fallback -->
+                                        <div class="title" th:text="${planMap[iter.index+1][meal.key].title} ?: 'Không tên'"></div>
+
                                         <form th:action="@{/app/meal-plan/remove}" method="post" style="display:inline;"
                                               th:onclick="event.stopPropagation()">
                                             <input type="hidden" name="planId" th:value="${plan.id}"/>
@@ -339,9 +343,12 @@
                     </div>
 
                     <div class="text-end mt-4">
-                        <button class="btn btn-success rounded-pill px-5 py-2 shadow-sm">
-                            <i class="bi bi-save"></i> Lưu thay đổi
-                        </button>
+                        <form th:action="@{/app/meal-plan}" method="get" class="d-inline">
+                            <input type="hidden" name="saved" value="1">
+                            <button class="btn btn-success rounded-pill px-5 py-2 shadow-sm" type="submit">
+                                <i class="bi bi-save"></i> Lưu thay đổi
+                            </button>
+                        </form>
                     </div>
                 </div>
             </div>
@@ -364,12 +371,15 @@
                             <img th:src="${recipe.imageUrl} ?: 'https://via.placeholder.com/300x200'"
                                  class="card-img-top rounded-top" style="height:160px; object-fit: cover;">
                             <div class="card-body d-flex flex-column">
-                                <h6 class="card-title fw-bold" th:text="${recipe.title}"></h6>
+                                <h6 class="card-title fw-bold" th:text="${recipe.title} ?: 'Không tên'"></h6>
                                 <div class="mt-auto">
                                     <form th:action="@{/app/meal-plan/update}" method="post">
                                         <input type="hidden" name="planId" th:value="${plan.id}"/>
-                                        <input type="hidden" name="dayOfWeek" id="modalDay"/>
-                                        <input type="hidden" name="mealType" id="modalMeal"/>
+
+                                        <!-- ✅ FIX: bỏ id trùng nhau, chỉ dùng name -->
+                                        <input type="hidden" name="dayOfWeek"/>
+                                        <input type="hidden" name="mealType"/>
+
                                         <input type="hidden" name="recipeId" th:value="${recipe.id}"/>
                                         <button type="submit" class="btn btn-success w-100 rounded-pill">
                                             Chọn món này
@@ -379,14 +389,15 @@
                             </div>
                         </div>
                     </div>
-                </div>
-            </div>
+                </div> <!-- row -->
+            </div> <!-- modal-body -->
         </div>
     </div>
 </div>
 
-<!-- Script fix lỗi chọn món ở mọi ô -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- Script set day/meal -->
 <script>
     const selectModal = document.getElementById('selectRecipeModal');
     selectModal.addEventListener('show.bs.modal', function (event) {
@@ -394,10 +405,14 @@
         const day = button.getAttribute('data-day');
         const meal = button.getAttribute('data-meal');
 
-        document.querySelectorAll('form[action="/app/meal-plan/update"] input[name="dayOfWeek"]').forEach(el => el.value = day);
-        document.querySelectorAll('form[action="/app/meal-plan/update"] input[name="mealType"]').forEach(el => el.value = meal);
+        document.querySelectorAll('form[action="/app/meal-plan/update"] input[name="dayOfWeek"]')
+            .forEach(el => el.value = day);
+
+        document.querySelectorAll('form[action="/app/meal-plan/update"] input[name="mealType"]')
+            .forEach(el => el.value = meal);
     });
 </script>
+
 <div th:replace="~{fragments/footer :: footer}"></div>
 </body>
 </html>

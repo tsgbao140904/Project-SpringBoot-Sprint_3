@@ -24,10 +24,12 @@ public class Recipe {
     @Column(nullable = false, length = 150)
     private String title;
 
-    @Lob @Column(nullable = false)
+    @Lob
+    @Column(nullable = false)
     private String ingredients;
 
-    @Lob @Column(nullable = false)
+    @Lob
+    @Column(nullable = false)
     private String instructions;
 
     private Integer calories;
@@ -69,8 +71,7 @@ public class Recipe {
     @Column(name = "share_rejected_reason")
     private String shareRejectedReason;
 
-
-    public Recipe() { }
+    public Recipe() {}
 
     @PrePersist
     void onCreate() {
@@ -84,6 +85,7 @@ public class Recipe {
         if (this.isPublic == null) this.isPublic = 0;
         if (this.version == null) this.version = 0;
 
+        // dòng này không ảnh hưởng (giữ nguyên như bạn có)
         if (this.shareStatus == null) this.shareStatus = null;
     }
 
@@ -147,29 +149,14 @@ public class Recipe {
     public Timestamp getUpdatedAt() { return updatedAt; }
     public void setUpdatedAt(Timestamp updatedAt) { this.updatedAt = updatedAt; }
 
-    // ==== Bổ sung getter/setter mới ====
+    // ==== SHARE getters/setters ====
 
-    public String getShareStatus() {
-        return shareStatus;
-    }
+    public String getShareStatus() { return shareStatus; }
+    public void setShareStatus(String shareStatus) { this.shareStatus = shareStatus; }
 
-    public void setShareStatus(String shareStatus) {
-        this.shareStatus = shareStatus;
-    }
+    public Timestamp getShareApprovedAt() { return shareApprovedAt; }
+    public void setShareApprovedAt(Timestamp shareApprovedAt) { this.shareApprovedAt = shareApprovedAt; }
 
-    public Timestamp getShareApprovedAt() {
-        return shareApprovedAt;
-    }
-
-    public void setShareApprovedAt(Timestamp shareApprovedAt) {
-        this.shareApprovedAt = shareApprovedAt;
-    }
-
-    public String getShareRejectedReason() {
-        return shareRejectedReason;
-    }
-
-    public void setShareRejectedReason(String shareRejectedReason) {
-        this.shareRejectedReason = shareRejectedReason;
-    }
+    public String getShareRejectedReason() { return shareRejectedReason; }
+    public void setShareRejectedReason(String shareRejectedReason) { this.shareRejectedReason = shareRejectedReason; }
 }

@@ -3,7 +3,7 @@ package com.example.recipediscovery.controller.user;
 import com.example.recipediscovery.dto.SessionUser;
 import com.example.recipediscovery.model.Recipe;
 import com.example.recipediscovery.repository.RecipeRepository;
-import com.example.recipediscovery.service.RecipeService; // ← thêm dòng này
+import com.example.recipediscovery.service.RecipeService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -15,47 +15,53 @@ import java.util.List;
 public class CommunityController {
 
     private final RecipeRepository recipeRepo;
-    private final RecipeService recipeService; // ← thêm field này
+    private final RecipeService recipeService;
 
     public CommunityController(RecipeRepository recipeRepo,
-                               RecipeService recipeService) { // ← thêm vào constructor
+                               RecipeService recipeService) {
         this.recipeRepo = recipeRepo;
         this.recipeService = recipeService;
     }
 
-    // Trang cộng đồng – BỔ SUNG TÌM KIẾM (không xóa code cũ)
     @GetMapping("/app/community")
-    public String community(@RequestParam(required = false) String q,  // ← thêm tham số q
-                            @RequestParam(defaultValue = "0") int page, // giữ nguyên phân trang
+    public String community(@RequestParam(required = false) String q,
+                            @RequestParam(defaultValue = "0") int page,
                             Model model) {
 
-        List<Recipe> recipes;
+        // 1) Lấy toàn bộ dữ liệu (all)
+        List<Recipe> all;
         if (q != null && !q.trim().isEmpty()) {
-            // Khi có từ khóa → tìm kiếm
-            recipes = recipeService.searchCommunityRecipes(q.trim());
+            all = recipeService.searchCommunityRecipes(q.trim());
         } else {
-            // Không có từ khóa → lấy tất cả như cũ
-            recipes = recipeRepo.findByShareStatusAndIsPublic("APPROVED", 1);
+            all = recipeRepo.findByShareStatusAndIsPublic("APPROVED", 1);
         }
 
-        // Giữ nguyên phần phân trang của bạn (12 món/trang)
+        // 2) Phân trang an toàn
         int pageSize = 12;
-        int totalRecipes = recipes.size();
-        int totalPages = (int) Math.ceil((double) totalRecipes / pageSize);
+        int totalRecipes = all.size();
+
+        int totalPages = (int) Math.ceil(totalRecipes / (double) pageSize);
+        if (totalPages < 1) totalPages = 1;        // để UI không bị 0 trang
+
+        // Clamp page để không bị start > end -> lỗi subList
+        if (page < 0) page = 0;
+        if (page > totalPages - 1) page = totalPages - 1;
+
         int start = page * pageSize;
         int end = Math.min(start + pageSize, totalRecipes);
 
-        List<Recipe> currentRecipes = (totalRecipes == 0) ? recipes : recipes.subList(start, end);
+        List<Recipe> currentRecipes = (totalRecipes == 0) ? List.of() : all.subList(start, end);
 
+        // 3) Đẩy dữ liệu sang view
         model.addAttribute("recipes", currentRecipes);
-        model.addAttribute("keyword", q);           // để giữ từ khóa trong ô tìm kiếm
+        model.addAttribute("keyword", q);
         model.addAttribute("pageNum", page);
         model.addAttribute("totalPages", totalPages);
+        model.addAttribute("totalRecipes", totalRecipes);
 
         return "user/community-home";
     }
 
-    // Chi tiết công thức cộng đồng – giữ nguyên 100%
     @GetMapping("/app/community/{id}")
     public String communityDetail(@PathVariable Long id,
                                   HttpSession session,

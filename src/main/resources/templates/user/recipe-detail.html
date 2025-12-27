@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="vi" xmlns:th="http://www.thymeleaf.org">
-
 <head>
   <meta charset="UTF-8">
   <title>Chi tiết công thức</title>
@@ -11,27 +10,34 @@
     body { background: #f5f5f7; font-family: system-ui, sans-serif; }
 
     .detail-card {
-        border-radius: 18px;
-        background: white;
-        box-shadow: 0 10px 25px rgba(0,0,0,0.15);
-        overflow: hidden;
+      border-radius: 18px;
+      background: white;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+      overflow: hidden;
     }
 
     .detail-img {
-        height: 320px;
-        width: 100%;
-        object-fit: cover;
+      height: 320px;
+      width: 100%;
+      object-fit: cover;
     }
 
     .category-pill {
-        position: absolute;
-        top: 15px;
-        right: 15px;
-        padding: 6px 14px;
-        border-radius: 999px;
-        color: white;
-        font-size: 13px;
-        font-weight: 600;
+      position: absolute;
+      top: 15px;
+      right: 15px;
+      padding: 6px 14px;
+      border-radius: 999px;
+      color: white;
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    /* ✅ quan trọng: giữ xuống dòng trong text */
+    .preline {
+      white-space: pre-line; /* hiển thị \n, \r\n thành xuống dòng */
+      line-height: 1.6;
+      margin-bottom: 0;
     }
   </style>
 </head>
@@ -39,51 +45,45 @@
 <body class="p-3">
 
 <!-- 🔙 NÚT QUAY LẠI -->
-<a th:if="${isCommunity != null and isCommunity}"
-   href="/app/community"
-   class="btn btn-secondary mb-3">← Quay lại cộng đồng</a>
-
-<a th:if="${isCommunity == null or !isCommunity}"
-   href="/app/home"
-   class="btn btn-secondary mb-3">← Quay lại</a>
-
+<a href="#"
+   class="btn btn-secondary mb-3"
+   onclick="if (window.history.length > 1) { window.history.back(); } else { window.location.href='/app/home'; } return false;">
+  ← Quay lại
+</a>
 
 
 <div class="container">
   <div class="detail-card">
 
     <div class="position-relative">
-      <img th:src="${recipe.imageUrl}" class="detail-img">
+      <img th:src="${recipe.imageUrl} ?: 'https://via.placeholder.com/900x500'"
+           class="detail-img" alt="recipe">
 
       <span class="category-pill"
-            th:style="'background:' + ${recipe.userCategory.colorCode}">
-                <span th:text="${recipe.userCategory.icon}"></span>
-                <span th:text="${recipe.userCategory.name}"></span>
-            </span>
+            th:style="'background:' + ${(recipe.userCategory != null and recipe.userCategory.colorCode != null) ? recipe.userCategory.colorCode : '#4caf50'}">
+          <span th:text="${(recipe.userCategory != null and recipe.userCategory.icon != null) ? recipe.userCategory.icon : '🍽️'}"></span>
+          <span th:text="${(recipe.userCategory != null and recipe.userCategory.name != null) ? recipe.userCategory.name : 'Chưa phân loại'}"></span>
+      </span>
     </div>
 
     <div class="p-4">
 
       <h2 class="fw-bold mb-2" th:text="${recipe.title}"></h2>
-      <div th:if="${recipe.shareStatus != null}" class="mt-2">
 
-        <div th:if="${recipe.shareStatus == 'PENDING'}"
-             class="alert alert-warning">
+      <div th:if="${recipe.shareStatus != null}" class="mt-2">
+        <div th:if="${recipe.shareStatus == 'PENDING'}" class="alert alert-warning">
           ⏳ Công thức này đang chờ admin duyệt.
         </div>
 
-        <div th:if="${recipe.shareStatus == 'APPROVED'}"
-             class="alert alert-success">
+        <div th:if="${recipe.shareStatus == 'APPROVED'}" class="alert alert-success">
           ✔ Công thức đã được admin duyệt!
         </div>
 
-        <div th:if="${recipe.shareStatus == 'REJECTED'}"
-             class="alert alert-danger">
+        <div th:if="${recipe.shareStatus == 'REJECTED'}" class="alert alert-danger">
           ❌ Công thức bị từ chối.
           <br>
           <small th:text="'Lý do: ' + ${recipe.shareRejectedReason}"></small>
         </div>
-
       </div>
 
       <div class="mb-2">
@@ -99,15 +99,28 @@
       <hr>
 
       <h5>Nguyên liệu</h5>
-      <p th:text="${recipe.ingredients}"></p>
+      <p class="preline"
+         th:if="${recipe.ingredients != null and !#strings.isEmpty(recipe.ingredients)}"
+         th:text="${recipe.ingredients}"></p>
 
-      <h5>Hướng dẫn</h5>
-      <p th:text="${recipe.instructions}"></p>
+      <p class="text-muted"
+         th:if="${recipe.ingredients == null or #strings.isEmpty(recipe.ingredients)}">
+        Chưa có nguyên liệu.
+      </p>
+
+      <h5 class="mt-3">Hướng dẫn</h5>
+      <p class="preline"
+         th:if="${recipe.instructions != null and !#strings.isEmpty(recipe.instructions)}"
+         th:text="${recipe.instructions}"></p>
+
+      <p class="text-muted"
+         th:if="${recipe.instructions == null or #strings.isEmpty(recipe.instructions)}">
+        Chưa có hướng dẫn.
+      </p>
 
       <hr>
 
       <!-- 🔥 CHỈ CHỦ CÔNG THỨC THẤY NÚT -->
-      <!-- 🔥 NÚT CHỈ CHO PHÉP SHARE 1 LẦN -->
       <div th:if="${isOwner != null and isOwner}" class="mt-3">
 
         <a th:href="@{'/app/recipes/' + ${recipe.id} + '/edit'}"
@@ -127,7 +140,6 @@
           <button class="btn btn-danger">🗑 Xóa</button>
         </form>
 
-        <!-- ⭐ Chưa share hoặc đã bị từ chối -> Cho phép share -->
         <form th:if="${recipe.shareStatus == null or recipe.shareStatus == 'REJECTED'}"
               th:action="@{'/app/recipes/' + ${recipe.id} + '/share'}"
               method="post"
@@ -138,14 +150,12 @@
           </button>
         </form>
 
-        <!-- ⏳ Đang chờ duyệt -->
         <button th:if="${recipe.shareStatus == 'PENDING'}"
                 class="btn btn-secondary"
                 disabled>
           ⏳ Chờ duyệt
         </button>
 
-        <!-- ✔ Đã duyệt -->
         <button th:if="${recipe.shareStatus == 'APPROVED'}"
                 class="btn btn-success"
                 disabled>
